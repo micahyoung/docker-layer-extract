@@ -6,8 +6,9 @@ import (
 )
 
 type Extractor struct {
-	parser    *Parser
-	imageRepo *ImageRepo
+	imageRepo         *ImageRepo
+	manifestParser    *ManifestParser
+	imageConfigParser *ImageConfigParser
 }
 
 type layerInfo struct {
@@ -17,8 +18,8 @@ type layerInfo struct {
 	LayerPath string
 }
 
-func NewExtractor(parser *Parser, imageRepo *ImageRepo) *Extractor {
-	return &Extractor{parser: parser, imageRepo: imageRepo}
+func NewExtractor(imageRepo *ImageRepo, manifestParser *ManifestParser, imageConfigParser *ImageConfigParser) *Extractor {
+	return &Extractor{imageRepo: imageRepo, manifestParser: manifestParser, imageConfigParser: imageConfigParser}
 }
 
 func (e *Extractor) GetImageLayerInfos(imagePath string) ([]*layerInfo, error) {
@@ -32,7 +33,7 @@ func (e *Extractor) GetImageLayerInfos(imagePath string) ([]*layerInfo, error) {
 	}
 
 	var imageConfigFilename string
-	imageConfigFilename, err = e.parser.ManifestImageConfigFilename(&manifestBuffer)
+	imageConfigFilename, err = e.manifestParser.ImageConfigFilename(&manifestBuffer)
 	if err != nil {
 		return nil, err
 	}
@@ -44,19 +45,19 @@ func (e *Extractor) GetImageLayerInfos(imagePath string) ([]*layerInfo, error) {
 	}
 
 	var layerIDs []string
-	layerIDs, err = e.parser.ImageConfigLayerIDs(&imageConfigBuffer)
+	layerIDs, err = e.imageConfigParser.LayerIDs(&imageConfigBuffer)
 	if err != nil {
 		return nil, err
 	}
 
 	var imageCommands []string
-	imageCommands, err = e.parser.ImageHistoryCommands(&imageConfigBuffer)
+	imageCommands, err = e.imageConfigParser.HistoryCommands(&imageConfigBuffer)
 	if err != nil {
 		return nil, err
 	}
 
 	var imageTarballLayerPaths []string
-	imageTarballLayerPaths, err = e.parser.ManifestLayerPaths(&manifestBuffer)
+	imageTarballLayerPaths, err = e.manifestParser.LayerPaths(&manifestBuffer)
 	if err != nil {
 		return nil, err
 	}

@@ -14,8 +14,9 @@ func main() {
 	app := cli.NewApp()
 
 	imageRepo := extract.NewImageRepo()
-	parser := extract.NewParser()
-	extractor := extract.NewExtractor(parser, imageRepo)
+	manifestParser := extract.NewManifestParser()
+	imageConfigParser := extract.NewImageConfigParser()
+	extractor := extract.NewExtractor(imageRepo, manifestParser, imageConfigParser)
 	cmdBuilder := cmd.NewBuilder(extractor)
 
 	app.Flags = []cli.Flag{
