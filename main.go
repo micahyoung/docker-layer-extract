@@ -13,8 +13,11 @@ import (
 func main() {
 	app := cli.NewApp()
 
-	extractor := extract.NewExtractor()
+	imageRepo := extract.NewImageRepo()
+	parser := extract.NewParser()
+	extractor := extract.NewExtractor(parser, imageRepo)
 	cmdBuilder := cmd.NewBuilder(extractor)
+
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
 			Name:  "imagefile, i",
