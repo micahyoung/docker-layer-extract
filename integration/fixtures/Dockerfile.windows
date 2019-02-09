@@ -1,0 +1,3 @@
+FROM mcr.microsoft.com/nanoserver:1803
+
+RUN echo test > c:\\Users\\ContainerUser\\test.txt
