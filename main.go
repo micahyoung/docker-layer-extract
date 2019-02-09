@@ -36,12 +36,16 @@ func main() {
 			Action:  cmdBuilder.ExtractAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
+					Name:  "layerfile, o",
+					Usage: "Output layer tar file",
+				},
+				cli.StringFlag{
 					Name:  "layerid, l",
 					Usage: "Layer ID to extract (get from: docker-layer-extract list)",
 				},
-				cli.StringFlag{
-					Name:  "layerfile, o",
-					Usage: "Output layer tar file",
+				cli.BoolFlag{
+					Name:  "newest, n",
+					Usage: "Use the most recent layer",
 				},
 			},
 		},

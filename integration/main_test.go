@@ -75,9 +75,9 @@ var _ = Describe("Main", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
-	It("extracts layer file from saved image file", func() {
-		expectedLayerPath := filepath.Join(imageDir, "layer.tar")
-		command := exec.Command(cliBin, "-i", imagePath, "extract", "-l", expectedLayerID, "-o", expectedLayerPath)
+	It("extracts the most recent layer file from saved image file", func() {
+		expectedLayerPath := filepath.Join(imageDir, "specific-layer.tar")
+		command := exec.Command(cliBin, "-i", imagePath, "extract", "-n", "-o", expectedLayerPath)
 		session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 
 		Eventually(session, 1*time.Minute).Should(gexec.Exit(0))
@@ -87,4 +87,15 @@ var _ = Describe("Main", func() {
 		Expect(err).ToNot(HaveOccurred())
 	})
 
+	It("extracts a specific layer file from saved image file", func() {
+		expectedLayerPath := filepath.Join(imageDir, "newest-layer.tar")
+		command := exec.Command(cliBin, "-i", imagePath, "extract", "-l", expectedLayerID, "-o", expectedLayerPath)
+		session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+
+		Eventually(session, 1*time.Minute).Should(gexec.Exit(0))
+
+		Expect(expectedLayerPath).Should(BeARegularFile())
+
+		Expect(err).ToNot(HaveOccurred())
+	})
 })

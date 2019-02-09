@@ -12,16 +12,18 @@ func (b *Builder) ExtractAction(c *cli.Context) error {
 	var err error
 	imagePath := c.GlobalString("imagefile")
 	layerID := c.String("layerid")
+	useNewestLayer := c.Bool("newest")
 	layerPath := c.String("layerfile")
 
 	if imagePath == "" {
 		return errors.New("missing input image file")
 	}
-	if layerID == "" {
-		return errors.New("missing desired layer ID")
-	}
 	if layerPath == "" {
 		return errors.New("missing output layer file")
+	}
+
+	if layerID == "" && !useNewestLayer {
+		return errors.New("missing desired layer ID")
 	}
 
 	if _, err = os.Stat(layerPath); !os.IsNotExist(err) {
@@ -34,9 +36,14 @@ func (b *Builder) ExtractAction(c *cli.Context) error {
 	}
 
 	var imageTarballLayerPath string
-	for _, layerInfo := range layerInfos {
-		if layerInfo.ID == layerID {
-			imageTarballLayerPath = layerInfo.LayerPath
+	if useNewestLayer {
+		newestLayerInfo := layerInfos[len(layerInfos)-1]
+		imageTarballLayerPath = newestLayerInfo.LayerPath
+	} else {
+		for _, layerInfo := range layerInfos {
+			if layerInfo.ID == layerID {
+				imageTarballLayerPath = layerInfo.LayerPath
+			}
 		}
 	}
 
