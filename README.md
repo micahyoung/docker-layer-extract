@@ -21,5 +21,5 @@ Layer 3:  ID: e51c8d4beda7dffeeb0b0b38fdae6a22e53377207f8c089cb24e35771ebb1506
 ```
 $ docker-layer-extract --imagefile <my image file>.tar extract \
 --layerid e51c8d4beda7dffeeb0b0b38fdae6a22e53377207f8c089cb24e35771ebb1506 \
---layerfile <my extract layer.tar>
+--layerfile <my extract layer>.tar
 ```
