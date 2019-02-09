@@ -20,6 +20,7 @@ import (
 )
 
 var cliBin string
+var imageDir string
 var imagePath string
 var expectedLayerID string
 
@@ -27,6 +28,8 @@ var _ = Describe("Main", func() {
 	BeforeSuite(func() {
 		var err error
 		var session *gexec.Session
+		imageDir, _ = ioutil.TempDir("", "image-tempdir")
+
 		dockerfilePath := filepath.Join("fixtures", fmt.Sprintf("Dockerfile.%s", runtime.GOOS))
 		imageTag := "docker-layer-extract-ci"
 
@@ -47,7 +50,6 @@ var _ = Describe("Main", func() {
 		expectedLayerID, err = helpers.ParseInspectLatestLayerID(inspectBuffer.String())
 		Expect(err).ToNot(HaveOccurred())
 
-		imageDir, _ := ioutil.TempDir("", "image-tempdir")
 		imagePath = filepath.Join(imageDir, "image.tar")
 		saveCmd := helpers.DockerImageSaveCommand(imageTag, imagePath)
 		session, err = gexec.Start(saveCmd, GinkgoWriter, GinkgoWriter)
@@ -58,12 +60,13 @@ var _ = Describe("Main", func() {
 	})
 
 	AfterSuite(func() {
-		os.Remove(imagePath)
+		os.RemoveAll(imageDir)
+
 		gexec.CleanupBuildArtifacts()
 	})
 
 	It("lists contents of saved image file", func() {
-		command := exec.Command(cliBin, "list", "-i", imagePath)
+		command := exec.Command(cliBin, "-i", imagePath, "list")
 		session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
 
 		Eventually(session, 1*time.Minute).Should(gexec.Exit(0))
@@ -71,4 +74,17 @@ var _ = Describe("Main", func() {
 
 		Expect(err).ToNot(HaveOccurred())
 	})
+
+	It("extracts layer file from saved image file", func() {
+		expectedLayerPath := filepath.Join(imageDir, "layer.tar")
+		command := exec.Command(cliBin, "-i", imagePath, "extract", "-l", expectedLayerID, "-o", expectedLayerPath)
+		session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+
+		Eventually(session, 1*time.Minute).Should(gexec.Exit(0))
+
+		Expect(expectedLayerPath).Should(BeARegularFile())
+
+		Expect(err).ToNot(HaveOccurred())
+	})
+
 })

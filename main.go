@@ -15,19 +15,19 @@ func main() {
 
 	extractor := extract.NewExtractor()
 	cmdBuilder := cmd.NewBuilder(extractor)
+	app.Flags = []cli.Flag{
+		cli.StringFlag{
+			Name:  "imagefile, i",
+			Usage: "Image tar file (get from: docker save)",
+		},
+	}
 
 	app.Commands = []cli.Command{
 		{
 			Name:    "list",
-			Aliases: []string{"l"},
+			Aliases: []string{"ls"},
 			Usage:   "list layers in image",
 			Action:  cmdBuilder.ListAction,
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "imagefile, i",
-					Usage: "Image tar file",
-				},
-			},
 		},
 		{
 			Name:    "extract",
@@ -36,16 +36,12 @@ func main() {
 			Action:  cmdBuilder.ExtractAction,
 			Flags: []cli.Flag{
 				cli.StringFlag{
-					Name:  "layerid, n",
-					Usage: "Layer ID to extract",
-				},
-				cli.StringFlag{
-					Name:  "imagefile, i",
-					Usage: "Image tar file",
+					Name:  "layerid, l",
+					Usage: "Layer ID to extract (get from: docker-layer-extract list)",
 				},
 				cli.StringFlag{
 					Name:  "layerfile, o",
-					Usage: "Layer tar file",
+					Usage: "Output layer tar file",
 				},
 			},
 		},
