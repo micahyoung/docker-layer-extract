@@ -9,6 +9,14 @@ Tool to extract individual layers from a saved docker image
 $ docker save <my image tag> -o <my image file>.tar
 ```
 
+### Extract newest layer from image tarball
+```
+$ docker-layer-extract --imagefile <my image file>.tar extract \
+--newest \
+--layerfile <my extract layer>.tar
+```
+
+
 ### List layers in image tarball
 ```
 $ docker-layer-extract --imagefile <my image file>.tar list 
