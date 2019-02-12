@@ -32,7 +32,7 @@ $ docker-layer-extract --imagefile <my image file>.tar extract \
 --layerfile <my extract layer>.tar
 ```
 
-## Viewing Hive Diff Entries
+## Viewing Hive Delta Entries
 Each `*_Delta` file is a registry hive file and can be viewed using `regedit`
 * Open Regedit
 * Click on `HKEY_LOCAL_MACHINE`
