@@ -31,3 +31,16 @@ $ docker-layer-extract --imagefile <my image file>.tar extract \
 --layerid e51c8d4beda7dffeeb0b0b38fdae6a22e53377207f8c089cb24e35771ebb1506 \
 --layerfile <my extract layer>.tar
 ```
+
+## Viewing Hive Diff Entries
+Each `*_Delta` file is a registry hive file and can be viewed using `regedit`
+* Open Regedit
+* Click on `HKEY_LOCAL_MACHINE`
+* Click `File -> Load Hive`
+* Navigate to your delta file example `System_Delta` and open
+* Choose a memorable, non-conflicting Key Name to load it under (ex: `Temp_System_Delta`)
+
+To close:
+* Click on Key Name (ex: `Temp_System_Delta`)
+* Click `File -> Unload Hive`
+* Confirm 
