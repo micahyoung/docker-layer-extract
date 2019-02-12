@@ -32,6 +32,10 @@ $ docker-layer-extract --imagefile <my image file>.tar extract \
 --layerfile <my extract layer>.tar
 ```
 
+## Windows Tarball format notes
+On Windows, the tarfile doesn't not appear to be a fully standard TAR format. You can still extract most of the relevant data but symlinks and other metadata are will cause issues for some TAR clients. I found the best tool for extracting is `tar` from the CLI, but `7-zip` also seems to extract well enough if you say "No" to all override prompts.
+
+
 ## Viewing Hive Delta Entries
 Each `*_Delta` file is a registry hive file and can be viewed using `regedit`
 * Open Regedit
