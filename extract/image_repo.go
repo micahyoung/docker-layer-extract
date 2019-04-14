@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"io"
 	"os"
+
+	"github.com/micahyoung/docker-layer-extract/layer"
 )
 
 type ImageRepo struct {
+	layerAnalyzer *layer.LayerReformatter
 }
 
-func NewImageRepo() *ImageRepo {
-	return &ImageRepo{}
+func NewImageRepo(layerAnalyzer *layer.LayerReformatter) *ImageRepo {
+	return &ImageRepo{layerAnalyzer}
 }
 
 func (i *ImageRepo) Copy(imagePath, filename string, writer io.Writer) error {
@@ -50,3 +53,4 @@ func (i *ImageRepo) Copy(imagePath, filename string, writer io.Writer) error {
 
 	return fmt.Errorf("%s not found", filename)
 }
+

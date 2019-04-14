@@ -8,15 +8,18 @@ import (
 
 	"github.com/micahyoung/docker-layer-extract/cmd"
 	"github.com/micahyoung/docker-layer-extract/extract"
+	"github.com/micahyoung/docker-layer-extract/layer"
 )
 
 func main() {
 	app := cli.NewApp()
 
-	imageRepo := extract.NewImageRepo()
 	manifestParser := extract.NewManifestParser()
 	imageConfigParser := extract.NewImageConfigParser()
-	extractor := extract.NewExtractor(imageRepo, manifestParser, imageConfigParser)
+	LayerReformatter := layer.NewLayerReformatter()
+	imageRepo := extract.NewImageRepo(LayerReformatter)
+	extractor := extract.NewExtractor(imageRepo, manifestParser, imageConfigParser, LayerReformatter)
+
 	cmdBuilder := cmd.NewBuilder(extractor)
 
 	app.Flags = []cli.Flag{
@@ -50,6 +53,10 @@ func main() {
 				cli.BoolFlag{
 					Name:  "newest, n",
 					Usage: "Use the most recent layer",
+				},
+				cli.BoolFlag{
+					Name:  "strip-pax, p",
+					Usage: "Strip vendor-specific PAX headers from output layer tar (typically in Windows layers)",
 				},
 			},
 		},
