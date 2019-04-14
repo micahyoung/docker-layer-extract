@@ -3,23 +3,31 @@ package extract
 import (
 	"bytes"
 	"os"
+
+	"github.com/micahyoung/docker-layer-extract/layer"
 )
 
 type Extractor struct {
 	imageRepo         *ImageRepo
 	manifestParser    *ManifestParser
 	imageConfigParser *ImageConfigParser
+	layerAnalyser     *layer.LayerAnalyser
+}
+
+type ExtractorOptions struct {
+	StripPax bool
 }
 
 type layerInfo struct {
-	Index     int
-	ID        string
-	Command   string
-	LayerPath string
+	Index         int
+	ID            string
+	Command       string
+	LayerPath     string
+	HasPaxHeaders bool
 }
 
-func NewExtractor(imageRepo *ImageRepo, manifestParser *ManifestParser, imageConfigParser *ImageConfigParser) *Extractor {
-	return &Extractor{imageRepo: imageRepo, manifestParser: manifestParser, imageConfigParser: imageConfigParser}
+func NewExtractor(imageRepo *ImageRepo, manifestParser *ManifestParser, imageConfigParser *ImageConfigParser, layerAnalyser *layer.LayerAnalyser) *Extractor {
+	return &Extractor{imageRepo, manifestParser, imageConfigParser, layerAnalyser}
 }
 
 func (e *Extractor) GetImageLayerInfos(imagePath string) ([]*layerInfo, error) {
@@ -63,18 +71,31 @@ func (e *Extractor) GetImageLayerInfos(imagePath string) ([]*layerInfo, error) {
 	}
 
 	for index, layerID := range layerIDs {
+		var layerTarBuffer bytes.Buffer
+		layerPath := imageTarballLayerPaths[index]
+		err = e.imageRepo.Copy(imagePath, layerPath, &layerTarBuffer)
+		if err != nil {
+			return nil, err
+		}
+
+		hasPaxHeaders, err := e.layerAnalyser.LayerHasPaxHeaders(&layerTarBuffer)
+		if err != nil {
+			return nil, err
+		}
+
 		layerInfos = append(layerInfos, &layerInfo{
-			Index:     index,
-			ID:        layerID,
-			Command:   imageCommands[index],
-			LayerPath: imageTarballLayerPaths[index],
+			Index:         index,
+			ID:            layerID,
+			Command:       imageCommands[index],
+			LayerPath:     layerPath,
+			HasPaxHeaders: hasPaxHeaders,
 		})
 	}
 
 	return layerInfos, nil
 }
 
-func (e *Extractor) ExtractLayerToPath(imagePath, imageTarballLayerPath, layerPath string) error {
+func (e *Extractor) ExtractLayerToPath(imagePath, imageTarballLayerPath, layerPath string, extractorOptions *ExtractorOptions) error {
 	var err error
 	var layerFile *os.File
 

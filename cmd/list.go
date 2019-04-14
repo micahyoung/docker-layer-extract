@@ -26,6 +26,7 @@ func (b *Builder) ListAction(c *cli.Context) error {
 		fmt.Printf("  Command: `%s`\n", layerInfo.Command)
 		fmt.Printf("  ID: %s\n", layerInfo.ID)
 		fmt.Printf("  ImageLayerPath: %s\n", layerInfo.LayerPath)
+		fmt.Printf("  Pax Headers: %t\n", layerInfo.HasPaxHeaders)
 	}
 
 	return nil

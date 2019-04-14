@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/micahyoung/docker-layer-extract/extract"
+
 	"github.com/urfave/cli"
 )
 
@@ -14,6 +16,7 @@ func (b *Builder) ExtractAction(c *cli.Context) error {
 	layerID := c.String("layerid")
 	useNewestLayer := c.Bool("newest")
 	layerPath := c.String("layerfile")
+	stripPax := c.Bool("strip-pax")
 
 	if imagePath == "" {
 		return errors.New("missing input image file")
@@ -51,7 +54,11 @@ func (b *Builder) ExtractAction(c *cli.Context) error {
 		return fmt.Errorf("Layer file not found for: %s", layerID)
 	}
 
-	err = b.extractor.ExtractLayerToPath(imagePath, imageTarballLayerPath, layerPath)
+	extractOptions := &extract.ExtractorOptions{
+		StripPax: stripPax,
+	}
+
+	err = b.extractor.ExtractLayerToPath(imagePath, imageTarballLayerPath, layerPath, extractOptions)
 	if err != nil {
 		return err
 	}
