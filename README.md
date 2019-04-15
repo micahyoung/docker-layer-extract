@@ -33,7 +33,7 @@ $ docker-layer-extract --imagefile <my image file>.tar extract \
 ```
 
 ## Windows Tarball format
-On Windows, the extracted layer embeds Windows-specific values in a PAX header. These values are useful for docker buy not compatible with most tar implementations. To strip these headers when extracting, use the `--strip-pax` option.
+On Windows, the extracted layer embeds Windows-specific values in a PAX header. These values are useful for Docker but not compatible with most tar implementations. To strip these headers when extracting, use the `--strip-pax` option.
 
 ## Viewing Hive Delta Entries
 Each `*_Delta` file is a registry hive file and can be viewed using `regedit`
