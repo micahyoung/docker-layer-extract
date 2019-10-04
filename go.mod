@@ -5,3 +5,5 @@ require (
 	github.com/onsi/gomega v1.4.3
 	github.com/urfave/cli v1.20.0
 )
+
+go 1.13
