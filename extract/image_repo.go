@@ -10,11 +10,11 @@ import (
 )
 
 type ImageRepo struct {
-	layerAnalyzer *layer.LayerReformatter
+	layerReformatter *layer.LayerReformatter
 }
 
-func NewImageRepo(layerAnalyzer *layer.LayerReformatter) *ImageRepo {
-	return &ImageRepo{layerAnalyzer}
+func NewImageRepo() *ImageRepo {
+	return &ImageRepo{}
 }
 
 func (i *ImageRepo) Copy(imagePath, filename string, writer io.Writer) error {
@@ -53,4 +53,3 @@ func (i *ImageRepo) Copy(imagePath, filename string, writer io.Writer) error {
 
 	return fmt.Errorf("%s not found", filename)
 }
-

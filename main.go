@@ -16,9 +16,9 @@ func main() {
 
 	manifestParser := extract.NewManifestParser()
 	imageConfigParser := extract.NewImageConfigParser()
-	LayerReformatter := layer.NewLayerReformatter()
-	imageRepo := extract.NewImageRepo(LayerReformatter)
-	extractor := extract.NewExtractor(imageRepo, manifestParser, imageConfigParser, LayerReformatter)
+	layerReformatter := layer.NewLayerReformatter()
+	imageRepo := extract.NewImageRepo()
+	extractor := extract.NewExtractor(imageRepo, manifestParser, imageConfigParser, layerReformatter)
 
 	cmdBuilder := cmd.NewBuilder(extractor)
 
