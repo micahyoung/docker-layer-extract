@@ -19,8 +19,9 @@ func main() {
 	layerReformatter := layer.NewLayerReformatter()
 	imageRepo := extract.NewImageRepo()
 	extractor := extract.NewExtractor(imageRepo, manifestParser, imageConfigParser, layerReformatter)
+	flattener := extract.NewFlattener(imageRepo, manifestParser, imageConfigParser, layerReformatter)
 
-	cmdBuilder := cmd.NewBuilder(extractor)
+	cmdBuilder := cmd.NewBuilder(extractor, flattener)
 
 	app.Flags = []cli.Flag{
 		cli.StringFlag{
@@ -53,6 +54,30 @@ func main() {
 				cli.BoolFlag{
 					Name:  "newest, n",
 					Usage: "Use the most recent layer",
+				},
+				cli.BoolFlag{
+					Name:  "strip-pax, p",
+					Usage: "Strip vendor-specific PAX headers from output layer tar (typically in Windows layers)",
+				},
+			},
+		},
+		{
+			Name:    "flatten",
+			Aliases: []string{"f"},
+			Usage:   "extract and flatten multiple image layers into single layer",
+			Action:  cmdBuilder.FlattenAction,
+			Flags: []cli.Flag{
+				cli.StringFlag{
+					Name:  "layerfile, o",
+					Usage: "Output layer tar file",
+				},
+				cli.StringFlag{
+					Name:  "startlayerid, l",
+					Usage: "Start Layer ID to flatten (get from: docker-layer-extract list)",
+				},
+				cli.StringFlag{
+					Name:  "endlayerid, e",
+					Usage: "Optional End Layer ID to flatten (use last layer if not specified)",
 				},
 				cli.BoolFlag{
 					Name:  "strip-pax, p",

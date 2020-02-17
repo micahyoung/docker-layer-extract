@@ -104,6 +104,7 @@ func (e *Extractor) ExtractLayerToPath(imagePath, imageTarballLayerPath, layerPa
 	if err != nil {
 		return err
 	}
+	defer layerFile.Close()
 
 	err = e.imageRepo.Copy(imagePath, imageTarballLayerPath, layerFile)
 	if err != nil {

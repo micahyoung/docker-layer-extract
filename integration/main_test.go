@@ -23,6 +23,7 @@ var cliBin string
 var imageDir string
 var imagePath string
 var expectedLayerID string
+var daemonOS string
 
 var _ = Describe("Main", func() {
 	BeforeSuite(func() {
@@ -47,7 +48,10 @@ var _ = Describe("Main", func() {
 		Expect(err).ToNot(HaveOccurred())
 		Eventually(session, 1*time.Minute).Should(gexec.Exit(0))
 
-		expectedLayerID, err = helpers.ParseInspectLatestLayerID(inspectBuffer.String())
+		daemonOS, err = helpers.ParseDaemonOS(inspectBuffer.String())
+		Expect(err).ToNot(HaveOccurred())
+
+		expectedLayerID, err = helpers.ParseInspectThirdLayerID(inspectBuffer.String())
 		Expect(err).ToNot(HaveOccurred())
 
 		imagePath = filepath.Join(imageDir, "image.tar")
@@ -97,5 +101,24 @@ var _ = Describe("Main", func() {
 		Expect(expectedLayerPath).Should(BeARegularFile())
 
 		Expect(err).ToNot(HaveOccurred())
+	})
+
+	FIt("flattens specific layers to layerfile from saved image file", func() {
+		expectedLayerPath := filepath.Join(imageDir, "flattend-layer.tar")
+		command := exec.Command(cliBin, "-i", imagePath, "flatten", "-l", expectedLayerID, "-o", expectedLayerPath)
+		session, err := gexec.Start(command, GinkgoWriter, GinkgoWriter)
+
+		Eventually(session, 1*time.Minute).Should(gexec.Exit(0))
+
+		Expect(expectedLayerPath).Should(BeARegularFile())
+
+		Expect(err).ToNot(HaveOccurred())
+
+		Expect(helpers.LayerFileContents(expectedLayerPath, "/workspace/test.txt", daemonOS)).To(ContainSubstring("test"))
+		Expect(helpers.LayerFileContents(expectedLayerPath, "/workspace/.wh.deleteme.txt", daemonOS)).To(ContainSubstring("not found"))
+		Expect(helpers.LayerFileContents(expectedLayerPath, "/workspace/deleteme.txt", daemonOS)).To(ContainSubstring("not found"))
+		Expect(helpers.LayerFileContents(expectedLayerPath, "/workspace/runoverride.txt", daemonOS)).To(ContainSubstring("runoverride"))
+		Expect(helpers.LayerFileContents(expectedLayerPath, "/workspace/copyoverride.txt", daemonOS)).To(ContainSubstring("copyoverride"))
+		Expect(helpers.LayerFileContents(expectedLayerPath, "/workspace/comeback.txt", daemonOS)).To(ContainSubstring("comeback"))
 	})
 })

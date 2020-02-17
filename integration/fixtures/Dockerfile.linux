@@ -1,3 +1,23 @@
 FROM alpine
 
-RUN echo test > /root/test.txt
+WORKDIR /workspace
+
+RUN echo test > test.txt
+
+RUN echo test > deleteme.txt
+
+RUN rm deleteme.txt
+
+RUN echo test > runoverride.txt
+
+RUN echo runoverride > runoverride.txt
+
+RUN echo test > copyoverride.txt
+
+COPY copyoverride.txt copyoverride.txt
+
+RUN echo test > comeback.txt
+
+RUN rm comeback.txt
+
+RUN echo comeback > comeback.txt

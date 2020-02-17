@@ -1,3 +1,23 @@
 FROM mcr.microsoft.com/windows/nanoserver:1809
 
-RUN echo test > c:\\Users\\ContainerUser\\test.txt
+WORKDIR c:/workspace
+
+RUN echo test > test.txt
+
+RUN echo test > deleteme.txt
+
+RUN del deleteme.txt
+
+RUN echo test > runoverride.txt
+
+RUN echo runoverride > runoverride.txt
+
+RUN echo test > copyoverride.txt
+
+COPY copyoverride.txt copyoverride.txt
+
+RUN echo test > comeback.txt
+
+RUN del comeback.txt
+
+RUN echo comeback > comeback.txt

@@ -6,8 +6,9 @@ import (
 
 type Builder struct {
 	extractor *extract.Extractor
+	flattener *extract.Flattener
 }
 
-func NewBuilder(extractor *extract.Extractor) *Builder {
-	return &Builder{extractor: extractor}
+func NewBuilder(extractor *extract.Extractor, flattener *extract.Flattener) *Builder {
+	return &Builder{extractor, flattener}
 }
