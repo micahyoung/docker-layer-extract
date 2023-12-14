@@ -2,6 +2,17 @@
 
 Tool to extract individual layers from a saved docker image
 
+## Building the binary
+```bash
+$ go install github.com/micahyoung/docker-layer-extract@latest
+```
+
+... or, build with Docker
+```bash
+$ docker run --rm -v $PWD:/out -e GOBIN=/out golang go install github.com/micahyoung/docker-layer-extract@latest
+```
+This will output the `docker-layer-extract` binary to your current directory
+
 ## Usage
 
 ### Extract your docker image to a tarball
