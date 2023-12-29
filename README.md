@@ -11,7 +11,7 @@ Tool to extract individual layers from a saved docker image
 
 * _**or alternatively,**_ using Docker:
   ```bash
-  $ docker run --rm -v $PWD:/out -e GOOS=$(uname -s|tr 'A-Z' 'a-z') golang sh -c 'go install github.com/micahyoung/docker-layer-extract@latest && mv /go/bin/**/docker-layer-extract /out'
+  $ docker run --rm -v $PWD:/out -e GOOS=$(uname -s|tr 'A-Z' 'a-z') golang bash -c 'go install github.com/micahyoung/docker-layer-extract@latest && find /go/bin -name docker-layer-extract | xargs mv -t /out'
   ```
 
 Either a will output the `docker-layer-extract` binary to your current directory
